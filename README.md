@@ -8,8 +8,8 @@
 
 ## Resources
 
-* Alfresco Documentation
-* Alfresco Enterprise Support portal
-* Fork and contribute to this SDK!
-* Report an Alfresco issue
-* Report an SDK issue
+* [Alfresco Documentation](http://docs.alfresco.com)
+* [Alfresco Enterprise Support portal](https://support.alfresco.com)
+* [Developer series](http://ecmarchitect.com/alfresco-developer-series)
+* [Fork and contribute to this SDK](https://github.com/Alfresco/alfresco-sdk/fork)
+* [Report an Alfresco issue](https://issues.alfresco.com/jira/browse/ALF)
