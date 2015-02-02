@@ -1,0 +1,5 @@
+/target
+/.settings
+/solr_home
+/.classpath
+/.project
