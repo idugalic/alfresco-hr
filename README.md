@@ -6,6 +6,12 @@
 * Wait for the startup of the webapps and then go http://localhost:8080.
 * Import the projects in your favorite IDE (with Maven integration) and start developing right away.
 
+## Boost Your Productivity
+
+* http://summit.alfresco.com/boston/sessions/boost-your-productivity-next-gen-bpm-tooling
+* http://bpmn20inaction.blogspot.be/2014/01/activiti-designer-5140-released.html
+* http://docs.alfresco.com/5.0/tasks/wf-install-activiti-designer.html
+
 ## Resources
 
 * [Alfresco Documentation](http://docs.alfresco.com)
