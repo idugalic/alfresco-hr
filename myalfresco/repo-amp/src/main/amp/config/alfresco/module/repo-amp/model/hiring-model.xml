@@ -109,7 +109,7 @@
                     <protected>false</protected>
                     <mandatory>true</mandatory>
                     <multiple>false</multiple>
-                     <constraints>
+                    <constraints>
                         <constraint ref="hiring:decisionlist"/>
                     </constraints>
                 </property>
