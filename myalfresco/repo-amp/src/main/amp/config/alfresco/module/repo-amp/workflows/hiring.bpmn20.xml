@@ -1,0 +1,312 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://www.activiti.org/test">
+  <process id="hiring" name="Hiring" isExecutable="true">
+    <documentation>Hiring process</documentation>
+    <startEvent id="start" activiti:initiator="initiatorUserName" activiti:formKey="hiring:start"></startEvent>
+    <sequenceFlow id="sequenceFlow1" sourceRef="start" targetRef="serviceTask1"></sequenceFlow>
+    <serviceTask id="serviceTask1" name="Review initialization" activiti:class="org.alfresco.repo.workflow.activiti.script.AlfrescoScriptDelegate">
+      <extensionElements>
+        <activiti:field name="script">
+          <activiti:expression>
+execution.setVariable('hiring_screeningapprovalcount', 0);
+execution.setVariable('hiring_screeningrequiredapprovalcount', hiring_requiresnumberofapprovers);
+</activiti:expression>
+        </activiti:field>
+      </extensionElements>
+    </serviceTask>
+    <sequenceFlow id="sequenceFlow2" sourceRef="serviceTask1" targetRef="userTask1"></sequenceFlow>
+    <userTask id="userTask1" name="Screening" activiti:assignee="${hiring_screeningassignee.properties.userName}" activiti:formKey="hiring:screening">
+      <documentation>Review task</documentation>
+      <extensionElements>
+        <activiti:taskListener event="create" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
+          <activiti:field name="script">
+            <activiti:string><![CDATA[
+if (typeof bpm_workflowDueDate != 'undefined') task.dueDate = bpm_workflowDueDate;
+if (typeof bpm_workflowPriority != 'undefined') task.priority = bpm_workflowPriority;;
+]]></activiti:string>
+          </activiti:field>
+        </activiti:taskListener>
+        <activiti:taskListener event="complete" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
+          <activiti:field name="script">
+            <activiti:string><![CDATA[
+if(task.getVariableLocal('hiring_screeningtransitions') == 'Approve') {
+execution.setVariable('hiring_screeningapprovalcount', hiring_screeningapprovalcount + 1);
+}
+]]></activiti:string>
+          </activiti:field>
+        </activiti:taskListener>
+      </extensionElements>
+      <multiInstanceLoopCharacteristics isSequential="false" activiti:collection="hiring_selectpeople" activiti:elementVariable="hiring_screeningassignee">
+        <completionCondition>${hiring_screeningapprovalcount &gt;= hiring_screeningrequiredapprovalcount}</completionCondition>
+      </multiInstanceLoopCharacteristics>
+    </userTask>
+    <exclusiveGateway id="exclusiveGateway1"></exclusiveGateway>
+    <sequenceFlow id="sequenceFlow3" sourceRef="userTask1" targetRef="exclusiveGateway1"></sequenceFlow>
+    <serviceTask id="serviceTask2" name="Rejection email" activiti:class="org.alfresco.repo.workflow.activiti.script.AlfrescoScriptDelegate">
+      <extensionElements>
+        <activiti:field name="script">
+          <activiti:expression>
+var mail = actions.create('mail');
+mail.parameters.to='${hiring_email}';
+mail.parameters.cc='';
+mail.parameters.from='idugalic@gmail.com';
+mail.parameters.subject='Sorry';
+mail.parameters.text='Sorry';
+mail.execute(bpm_package);
+</activiti:expression>
+        </activiti:field>
+      </extensionElements>
+    </serviceTask>
+    <sequenceFlow id="sequenceFlow4" name="Rejected" sourceRef="exclusiveGateway1" targetRef="serviceTask2">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${hiring_screeningapprovalcount < hiring_screeningrequiredapprovalcount}]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="sequenceFlow5" name="Approved" sourceRef="exclusiveGateway1" targetRef="exclusiveGateway2"></sequenceFlow>
+    <exclusiveGateway id="exclusiveGateway2"></exclusiveGateway>
+    <sequenceFlow id="sequenceFlow6" sourceRef="serviceTask2" targetRef="exclusiveGateway2"></sequenceFlow>
+    <sequenceFlow id="sequenceFlow7" sourceRef="exclusiveGateway2" targetRef="userTask2"></sequenceFlow>
+    <userTask id="userTask2" name="Schedule interview" activiti:assignee="${initiator.properties.userName}" activiti:formKey="hiring:scheduleinterview">
+      <documentation>Schedule
+</documentation>
+      <extensionElements>
+        <activiti:taskListener event="create" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
+          <activiti:field name="script">
+            <activiti:string><![CDATA[
+if (typeof bpm_workflowDueDate != 'undefined') task.dueDate = bpm_workflowDueDate;
+if (typeof bpm_workflowPriority != 'undefined') task.priority = bpm_workflowPriority;;
+]]></activiti:string>
+          </activiti:field>
+        </activiti:taskListener>
+        <activiti:taskListener event="complete" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
+          <activiti:field name="script">
+            <activiti:string><![CDATA[
+if (typeof task.getVariableLocal('hiring_date') != undefined) execution.setVariable('hiring_date', task.getVariableLocal('hiring_date'));
+]]></activiti:string>
+          </activiti:field>
+        </activiti:taskListener>
+      </extensionElements>
+    </userTask>
+    <sequenceFlow id="sequenceFlow8" sourceRef="userTask2" targetRef="intermediateEvent1"></sequenceFlow>
+    <intermediateCatchEvent id="intermediateEvent1" name="Wait until interview date">
+      <timerEventDefinition>
+        <timeDate>${hiring_date}</timeDate>
+      </timerEventDefinition>
+    </intermediateCatchEvent>
+    <sequenceFlow id="sequenceFlow9" sourceRef="intermediateEvent1" targetRef="userTask3"></sequenceFlow>
+    <userTask id="userTask3" name="Interview" activiti:assignee="${initiator.properties.userName}" activiti:formKey="hiring:interview">
+      <documentation>Interview</documentation>
+      <extensionElements>
+        <activiti:taskListener event="create" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
+          <activiti:field name="script">
+            <activiti:string><![CDATA[
+if (typeof bpm_workflowDueDate != 'undefined') task.dueDate = bpm_workflowDueDate;
+if (typeof bpm_workflowPriority != 'undefined') task.priority = bpm_workflowPriority;;
+]]></activiti:string>
+          </activiti:field>
+        </activiti:taskListener>
+        <activiti:taskListener event="complete" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
+          <activiti:field name="script">
+            <activiti:string><![CDATA[
+if (typeof task.getVariableLocal('hiring_generalimpression') != undefined) execution.setVariable('hiring_generalimpression', task.getVariableLocal('hiring_generalimpression'));
+if (typeof task.getVariableLocal('hiring_decision') != undefined) execution.setVariable('hiring_decision', task.getVariableLocal('hiring_decision'));
+]]></activiti:string>
+          </activiti:field>
+        </activiti:taskListener>
+      </extensionElements>
+    </userTask>
+    <exclusiveGateway id="exclusiveGateway3"></exclusiveGateway>
+    <sequenceFlow id="sequenceFlow10" sourceRef="userTask3" targetRef="exclusiveGateway3"></sequenceFlow>
+    <serviceTask id="serviceTask3" name="Email step" activiti:class="org.alfresco.repo.workflow.activiti.script.AlfrescoScriptDelegate">
+      <extensionElements>
+        <activiti:field name="script">
+          <activiti:expression>
+var mail = actions.create('mail');
+mail.parameters.to='';
+mail.parameters.cc='';
+mail.parameters.from='';
+mail.parameters.subject='';
+mail.parameters.text='';
+mail.execute(bpm_package);
+</activiti:expression>
+        </activiti:field>
+      </extensionElements>
+    </serviceTask>
+    <sequenceFlow id="sequenceFlow11" name="non happy path" sourceRef="exclusiveGateway3" targetRef="serviceTask3">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${hiring_decision == 'reject'}]]></conditionExpression>
+    </sequenceFlow>
+    <serviceTask id="serviceTask4" name="Approval email" activiti:class="org.alfresco.repo.workflow.activiti.script.AlfrescoScriptDelegate">
+      <extensionElements>
+        <activiti:field name="script">
+          <activiti:expression>
+var mail = actions.create('mail');
+mail.parameters.to='${hiring_email}';
+mail.parameters.cc='';
+mail.parameters.from='idugalic@gmail.com';
+mail.parameters.subject='YOu got a job';
+mail.parameters.text=':)';
+mail.execute(bpm_package);
+</activiti:expression>
+        </activiti:field>
+      </extensionElements>
+    </serviceTask>
+    <sequenceFlow id="sequenceFlow12" name="happy path" sourceRef="exclusiveGateway3" targetRef="serviceTask4">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${hiring_decision == 'hire'}]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="sequenceFlow13" sourceRef="serviceTask4" targetRef="userTask4"></sequenceFlow>
+    <userTask id="userTask4" name="Do paperwork" activiti:candidateGroups="HR_GROUP" activiti:formKey="hiring:dopaperwork">
+      <extensionElements>
+        <activiti:taskListener event="create" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
+          <activiti:field name="script">
+            <activiti:string><![CDATA[
+if (typeof bpm_workflowDueDate != 'undefined') task.dueDate = bpm_workflowDueDate;
+if (typeof bpm_workflowPriority != 'undefined') task.priority = bpm_workflowPriority;;
+]]></activiti:string>
+          </activiti:field>
+        </activiti:taskListener>
+      </extensionElements>
+    </userTask>
+    <exclusiveGateway id="exclusiveGateway4"></exclusiveGateway>
+    <sequenceFlow id="sequenceFlow14" sourceRef="serviceTask3" targetRef="exclusiveGateway4"></sequenceFlow>
+    <sequenceFlow id="sequenceFlow15" sourceRef="userTask4" targetRef="exclusiveGateway4"></sequenceFlow>
+    <endEvent id="end"></endEvent>
+    <sequenceFlow id="sequenceFlow16" sourceRef="exclusiveGateway4" targetRef="end"></sequenceFlow>
+  </process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_hiring">
+    <bpmndi:BPMNPlane bpmnElement="hiring" id="BPMNPlane_hiring">
+      <bpmndi:BPMNShape bpmnElement="exclusiveGateway4" id="BPMNShape_exclusiveGateway4">
+        <omgdc:Bounds height="40.0" width="40.0" x="1480.0" y="76.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="exclusiveGateway3" id="BPMNShape_exclusiveGateway3">
+        <omgdc:Bounds height="40.0" width="40.0" x="1090.0" y="90.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="exclusiveGateway2" id="BPMNShape_exclusiveGateway2">
+        <omgdc:Bounds height="40.0" width="40.0" x="620.0" y="78.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="exclusiveGateway1" id="BPMNShape_exclusiveGateway1">
+        <omgdc:Bounds height="40.0" width="40.0" x="380.0" y="78.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="serviceTask1" id="BPMNShape_serviceTask1">
+        <omgdc:Bounds height="60.0" width="100.0" x="80.0" y="74.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="start" id="BPMNShape_start">
+        <omgdc:Bounds height="30.0" width="30.0" x="0.0" y="89.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="serviceTask4" id="BPMNShape_serviceTask4">
+        <omgdc:Bounds height="60.0" width="100.0" x="1180.0" y="160.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="serviceTask2" id="BPMNShape_serviceTask2">
+        <omgdc:Bounds height="60.0" width="100.0" x="470.0" y="130.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="serviceTask3" id="BPMNShape_serviceTask3">
+        <omgdc:Bounds height="60.0" width="100.0" x="1180.0" y="0.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="userTask1" id="BPMNShape_userTask1">
+        <omgdc:Bounds height="60.0" width="100.0" x="230.0" y="72.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="userTask3" id="BPMNShape_userTask3">
+        <omgdc:Bounds height="60.0" width="100.0" x="940.0" y="78.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="end" id="BPMNShape_end">
+        <omgdc:Bounds height="30.0" width="30.0" x="1570.0" y="81.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="userTask2" id="BPMNShape_userTask2">
+        <omgdc:Bounds height="60.0" width="100.0" x="710.0" y="72.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="userTask4" id="BPMNShape_userTask4">
+        <omgdc:Bounds height="60.0" width="100.0" x="1330.0" y="130.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="intermediateEvent1" id="BPMNShape_intermediateEvent1">
+        <omgdc:Bounds height="30.0" width="30.0" x="860.0" y="90.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge bpmnElement="sequenceFlow5" id="BPMNEdge_sequenceFlow5">
+        <omgdi:waypoint x="420.0" y="98.0"></omgdi:waypoint>
+        <omgdi:waypoint x="620.0" y="98.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sequenceFlow6" id="BPMNEdge_sequenceFlow6">
+        <omgdi:waypoint x="570.0" y="160.0"></omgdi:waypoint>
+        <omgdi:waypoint x="582.0" y="160.0"></omgdi:waypoint>
+        <omgdi:waypoint x="582.0" y="98.0"></omgdi:waypoint>
+        <omgdi:waypoint x="620.0" y="98.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sequenceFlow3" id="BPMNEdge_sequenceFlow3">
+        <omgdi:waypoint x="330.0" y="102.0"></omgdi:waypoint>
+        <omgdi:waypoint x="342.0" y="102.0"></omgdi:waypoint>
+        <omgdi:waypoint x="342.0" y="98.0"></omgdi:waypoint>
+        <omgdi:waypoint x="380.0" y="98.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sequenceFlow4" id="BPMNEdge_sequenceFlow4">
+        <omgdi:waypoint x="420.0" y="98.0"></omgdi:waypoint>
+        <omgdi:waypoint x="432.0" y="98.0"></omgdi:waypoint>
+        <omgdi:waypoint x="432.0" y="160.0"></omgdi:waypoint>
+        <omgdi:waypoint x="470.0" y="160.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sequenceFlow1" id="BPMNEdge_sequenceFlow1">
+        <omgdi:waypoint x="30.0" y="104.0"></omgdi:waypoint>
+        <omgdi:waypoint x="80.0" y="104.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sequenceFlow2" id="BPMNEdge_sequenceFlow2">
+        <omgdi:waypoint x="180.0" y="104.0"></omgdi:waypoint>
+        <omgdi:waypoint x="192.0" y="104.0"></omgdi:waypoint>
+        <omgdi:waypoint x="192.0" y="102.0"></omgdi:waypoint>
+        <omgdi:waypoint x="230.0" y="102.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sequenceFlow11" id="BPMNEdge_sequenceFlow11">
+        <omgdi:waypoint x="1130.0" y="110.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1142.0" y="110.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1142.0" y="30.000000000000007"></omgdi:waypoint>
+        <omgdi:waypoint x="1180.0" y="30.000000000000007"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sequenceFlow10" id="BPMNEdge_sequenceFlow10">
+        <omgdi:waypoint x="1040.0" y="108.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1052.0" y="108.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1052.0" y="110.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1090.0" y="110.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sequenceFlow9" id="BPMNEdge_sequenceFlow9">
+        <omgdi:waypoint x="890.0" y="105.0"></omgdi:waypoint>
+        <omgdi:waypoint x="902.0" y="105.0"></omgdi:waypoint>
+        <omgdi:waypoint x="902.0" y="108.0"></omgdi:waypoint>
+        <omgdi:waypoint x="940.0" y="108.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sequenceFlow7" id="BPMNEdge_sequenceFlow7">
+        <omgdi:waypoint x="660.0" y="98.0"></omgdi:waypoint>
+        <omgdi:waypoint x="672.0" y="98.0"></omgdi:waypoint>
+        <omgdi:waypoint x="672.0" y="102.0"></omgdi:waypoint>
+        <omgdi:waypoint x="710.0" y="102.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sequenceFlow8" id="BPMNEdge_sequenceFlow8">
+        <omgdi:waypoint x="810.0" y="102.0"></omgdi:waypoint>
+        <omgdi:waypoint x="822.0" y="102.0"></omgdi:waypoint>
+        <omgdi:waypoint x="822.0" y="105.0"></omgdi:waypoint>
+        <omgdi:waypoint x="860.0" y="105.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sequenceFlow16" id="BPMNEdge_sequenceFlow16">
+        <omgdi:waypoint x="1520.0" y="96.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1570.0" y="96.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sequenceFlow15" id="BPMNEdge_sequenceFlow15">
+        <omgdi:waypoint x="1430.0" y="160.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1442.0" y="160.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1442.0" y="96.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1480.0" y="96.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sequenceFlow14" id="BPMNEdge_sequenceFlow14">
+        <omgdi:waypoint x="1280.0" y="30.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1292.0" y="30.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1292.0" y="96.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1480.0" y="96.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sequenceFlow13" id="BPMNEdge_sequenceFlow13">
+        <omgdi:waypoint x="1280.0" y="190.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1292.0" y="190.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1292.0" y="160.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1330.0" y="160.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sequenceFlow12" id="BPMNEdge_sequenceFlow12">
+        <omgdi:waypoint x="1130.0" y="110.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1142.0" y="110.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1142.0" y="190.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1180.0" y="190.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>

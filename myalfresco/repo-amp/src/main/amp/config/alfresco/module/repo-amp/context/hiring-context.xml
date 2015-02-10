@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+    <bean parent="workflowDeployer" id="hiring.workflowBootstrap">
+        <property name="models">
+            <list>
+                <value>alfresco/module/${artifactId}/model/hiring-model.xml</value>
+            </list>
+        </property>
+        <property name="workflowDefinitions">
+            <props>
+                <prop key="engineId">activiti</prop>
+                <prop key="mimeType">text/xml</prop>
+                <prop key="location">alfresco/module/${artifactId}/workflows/hiring.bpmn20.xml</prop>
+                <prop key="redeploy">true</prop>
+            </props>
+        </property>
+    </bean>
+</beans>

@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<alfresco-configuration>
+    <config condition="hiring:screening" evaluator="task-type">
+        <forms>
+            <form>
+                <field-visibility>
+                    <show id="hiring:name"/>
+                    <show id="hiring:email"/>
+                    <show id="hiring:position"/>
+                    <show id="packageItems"/>
+                    <show id="hiring:screeningtransitions"/>
+                </field-visibility>
+                <appearance>
+                    <set template="/org/alfresco/components/form/3-column-set.ftl" appearance="title" label-id="Info" id="info"/>
+                    <field set="info" label-id="Name" id="hiring:name">
+                        <control template="/org/alfresco/components/form/controls/info.ftl"/>
+                    </field>
+                    <field set="info" label-id="Email" id="hiring:email">
+                        <control template="/org/alfresco/components/form/controls/info.ftl"/>
+                    </field>
+                    <field set="info" label-id="Position" id="hiring:position">
+                        <control template="/org/alfresco/components/form/controls/info.ftl"/>
+                    </field>
+                    <set appearance="title" label-id="Resumes and pictures" id="resumesandpictures"/>
+                    <field set="resumesandpictures" id="packageItems"/>
+                    <set id="response"/>
+                    <field set="response" id="hiring:screeningtransitions">
+                        <control template="/org/alfresco/components/form/controls/workflow/activiti-transitions.ftl"/>
+                    </field>
+                </appearance>
+            </form>
+        </forms>
+    </config>
+    <config condition="hiring:scheduleinterview" evaluator="task-type">
+        <forms>
+            <form>
+                <field-visibility>
+                    <show id="hiring:name"/>
+                    <show id="hiring:email"/>
+                    <show id="hiring:position"/>
+                    <show id="packageItems"/>
+                    <show id="hiring:date"/>
+                    <show id="transitions"/>
+                </field-visibility>
+                <appearance>
+                    <set template="/org/alfresco/components/form/3-column-set.ftl" appearance="title" label-id="Info" id="info"/>
+                    <field set="info" label-id="Name" id="hiring:name">
+                        <control template="/org/alfresco/components/form/controls/info.ftl"/>
+                    </field>
+                    <field set="info" label-id="Email" id="hiring:email">
+                        <control template="/org/alfresco/components/form/controls/info.ftl"/>
+                    </field>
+                    <field set="info" label-id="Position" id="hiring:position">
+                        <control template="/org/alfresco/components/form/controls/info.ftl"/>
+                    </field>
+                    <set appearance="title" label-id="Resumes and pictures" id="resumesandpictures"/>
+                    <field set="resumesandpictures" id="packageItems"/>
+                    <set appearance="title" label-id="Interview" id="interview"/>
+                    <field set="interview" label-id="Date" id="hiring:date">
+                        <control template="/org/alfresco/components/form/controls/date.ftl">
+                            <control-param name="showTime">true</control-param>
+                            <control-param name="submitTime">true</control-param>
+                        </control>
+                    </field>
+                    <set id="response"/>
+                    <field set="response" id="transitions"/>
+                </appearance>
+            </form>
+        </forms>
+    </config>
+    <config condition="hiring:interview" evaluator="task-type">
+        <forms>
+            <form>
+                <field-visibility>
+                    <show id="hiring:name"/>
+                    <show id="hiring:email"/>
+                    <show id="hiring:position"/>
+                    <show id="packageItems"/>
+                    <show id="hiring:generalimpression"/>
+                    <show id="hiring:decision"/>
+                    <show id="transitions"/>
+                </field-visibility>
+                <appearance>
+                    <set template="/org/alfresco/components/form/3-column-set.ftl" appearance="title" label-id="Info" id="info"/>
+                    <field set="info" label-id="Name" id="hiring:name">
+                        <control template="/org/alfresco/components/form/controls/info.ftl"/>
+                    </field>
+                    <field set="info" label-id="Email" id="hiring:email">
+                        <control template="/org/alfresco/components/form/controls/info.ftl"/>
+                    </field>
+                    <field set="info" label-id="Position" id="hiring:position">
+                        <control template="/org/alfresco/components/form/controls/info.ftl"/>
+                    </field>
+                    <set appearance="title" label-id="Resumes and pictures" id="resumesandpictures"/>
+                    <field set="resumesandpictures" id="packageItems"/>
+                    <set appearance="title" label-id="Interview" id="interview"/>
+                    <field set="interview" label-id="General impression" id="hiring:generalimpression"/>
+                    <field set="interview" label-id="Decision" id="hiring:decision"/>
+                    <set id="response"/>
+                    <field set="response" id="transitions"/>
+                </appearance>
+            </form>
+        </forms>
+    </config>
+    <config condition="hiring:dopaperwork" evaluator="task-type">
+        <forms>
+            <form>
+                <field-visibility>
+                    <show id="hiring:name"/>
+                    <show id="hiring:email"/>
+                    <show id="hiring:position"/>
+                    <show id="transitions"/>
+                </field-visibility>
+                <appearance>
+                    <set template="/org/alfresco/components/form/3-column-set.ftl" appearance="title" label-id="Info" id="info"/>
+                    <field set="info" label-id="Name" id="hiring:name">
+                        <control template="/org/alfresco/components/form/controls/info.ftl"/>
+                    </field>
+                    <field set="info" label-id="Email" id="hiring:email">
+                        <control template="/org/alfresco/components/form/controls/info.ftl"/>
+                    </field>
+                    <field set="info" label-id="Position" id="hiring:position">
+                        <control template="/org/alfresco/components/form/controls/info.ftl"/>
+                    </field>
+                    <set id="response"/>
+                    <field set="response" id="transitions"/>
+                </appearance>
+            </form>
+        </forms>
+    </config>
+    <config condition="activiti$hiring" evaluator="string-compare">
+        <forms>
+            <form>
+                <field-visibility>
+                    <show id="bpm:workflowDescription"/>
+                    <show id="bpm:workflowPriority"/>
+                    <show id="hiring:position"/>
+                    <show id="hiring:name"/>
+                    <show id="hiring:email"/>
+                    <show id="packageItems"/>
+                    <show id="hiring:selectpeople"/>
+                    <show id="hiring:requiresnumberofapprovers"/>
+                    <show id="transitions"/>
+                </field-visibility>
+                <appearance>
+                    <set template="/org/alfresco/components/form/2-column-set.ftl" appearance="title" label-id="Info" id="info"/>
+                    <field set="info" label-id="workflow.field.message" id="bpm:workflowDescription">
+                        <control template="/org/alfresco/components/form/controls/textarea.ftl"/>
+                    </field>
+                    <field set="info" label-id="workflow.field.priority" id="bpm:workflowPriority">
+                        <control template="/org/alfresco/components/form/controls/workflow/priority.ftl"/>
+                    </field>
+                    <field set="info" label-id="Position" id="hiring:position"/>
+                    <set template="/org/alfresco/components/form/2-column-set.ftl" appearance="title" label-id="Candidate information" id=""/>
+                    <field set="" label-id="Name" id="hiring:name">
+                        <control template="/org/alfresco/components/form/controls/textfield.ftl"/>
+                    </field>
+                    <field set="" label-id="Email" id="hiring:email">
+                        <control template="/org/alfresco/components/form/controls/textfield.ftl"/>
+                    </field>
+                    <set appearance="title" label-id="Resumes and pictures" id=""/>
+                    <field set="" id="packageItems"/>
+                    <set template="/org/alfresco/components/form/2-column-set.ftl" appearance="title" label-id="Screeining" id="screeining"/>
+                    <field set="screeining" id="hiring:selectpeople"/>
+                    <field set="screeining" label-id="Requires number of approvers" id="hiring:requiresnumberofapprovers">
+                        <control template="/org/alfresco/components/form/controls/number.ftl"/>
+                    </field>
+                    <set id="response"/>
+                    <field set="response" id="transitions"/>
+                </appearance>
+            </form>
+        </forms>
+    </config>
+    <config condition="hiring:start" evaluator="task-type">
+        <forms>
+            <form>
+                <field-visibility>
+                    <show id="bpm:workflowDescription"/>
+                    <show id="bpm:workflowPriority"/>
+                    <show id="hiring:position"/>
+                    <show id="hiring:name"/>
+                    <show id="hiring:email"/>
+                    <show id="packageItems"/>
+                    <show id="hiring:selectpeople"/>
+                    <show id="hiring:requiresnumberofapprovers"/>
+                    <show id="transitions"/>
+                </field-visibility>
+                <appearance>
+                    <set template="/org/alfresco/components/form/2-column-set.ftl" appearance="title" label-id="Info" id="info"/>
+                    <field set="info" label-id="workflow.field.message" id="bpm:workflowDescription">
+                        <control template="/org/alfresco/components/form/controls/textarea.ftl"/>
+                    </field>
+                    <field set="info" label-id="workflow.field.priority" id="bpm:workflowPriority">
+                        <control template="/org/alfresco/components/form/controls/workflow/priority.ftl"/>
+                    </field>
+                    <field set="info" label-id="Position" id="hiring:position"/>
+                    <set template="/org/alfresco/components/form/2-column-set.ftl" appearance="title" label-id="Candidate information" id=""/>
+                    <field set="" label-id="Name" id="hiring:name">
+                        <control template="/org/alfresco/components/form/controls/textfield.ftl"/>
+                    </field>
+                    <field set="" label-id="Email" id="hiring:email">
+                        <control template="/org/alfresco/components/form/controls/textfield.ftl"/>
+                    </field>
+                    <set appearance="title" label-id="Resumes and pictures" id=""/>
+                    <field set="" id="packageItems"/>
+                    <set template="/org/alfresco/components/form/2-column-set.ftl" appearance="title" label-id="Screeining" id="screeining"/>
+                    <field set="screeining" id="hiring:selectpeople"/>
+                    <field set="screeining" label-id="Requires number of approvers" id="hiring:requiresnumberofapprovers">
+                        <control template="/org/alfresco/components/form/controls/number.ftl"/>
+                    </field>
+                    <set id="response"/>
+                    <field set="response" id="transitions"/>
+                </appearance>
+            </form>
+        </forms>
+    </config>
+</alfresco-configuration>

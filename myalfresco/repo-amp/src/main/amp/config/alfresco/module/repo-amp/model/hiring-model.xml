@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model xmlns="http://www.alfresco.org/model/dictionary/1.0" name="hiring:model">
+    <imports>
+        <import prefix="d" uri="http://www.alfresco.org/model/dictionary/1.0"/>
+        <import prefix="cm" uri="http://www.alfresco.org/model/content/1.0"/>
+        <import prefix="bpm" uri="http://www.alfresco.org/model/bpm/1.0"/>
+    </imports>
+    <namespaces>
+        <namespace prefix="hiring" uri="http://www.alfresco.org/model/dynamic-workflow/hiring/1.0"/>
+    </namespaces>
+    <constraints>
+        <constraint type="LIST" name="hiring:screeningtransitionslist">
+            <parameter name="allowedValues">
+                <list>
+                    <value>Approve</value>
+                    <value>Reject</value>
+                </list>
+            </parameter>
+        </constraint>
+        <constraint type="LIST" name="hiring:decisionlist">
+            <parameter name="allowedValues">
+                <list>
+                    <value>hire</value>
+                    <value>reject</value>
+                </list>
+            </parameter>
+        </constraint>
+    </constraints>
+    <types>
+        <type name="hiring:screening">
+            <parent>bpm:activitiOutcomeTask</parent>
+            <properties>
+                <property name="hiring:screeningtransitions">
+                    <type>d:text</type>
+                    <protected>false</protected>
+                    <mandatory>false</mandatory>
+                    <multiple>false</multiple>
+                    <constraints>
+                        <constraint ref="hiring:screeningtransitionslist"/>
+                    </constraints>
+                </property>
+            </properties>
+            <associations>
+                <association name="hiring:screeningassignee">
+                    <source>
+                        <mandatory>true</mandatory>
+                        <many>false</many>
+                    </source>
+                    <target>
+                        <class>cm:person</class>
+                        <mandatory>true</mandatory>
+                        <many>false</many>
+                    </target>
+                </association>
+            </associations>
+            <overrides>
+                <property name="bpm:packageActionGroup">
+                    <default>add_package_item_actions</default>
+                </property>
+                <property name="bpm:packageItemActionGroup">
+                    <default>edit_and_remove_package_item_actions</default>
+                </property>
+                <property name="bpm:outcomePropertyName">
+                    <default>{http://www.alfresco.org/model/dynamic-workflow/hiring/1.0}screeningtransitions</default>
+                </property>
+            </overrides>
+            <mandatory-aspects>
+                <aspect>hiring:name</aspect>
+                <aspect>hiring:email</aspect>
+                <aspect>hiring:position</aspect>
+            </mandatory-aspects>
+        </type>
+        <type name="hiring:scheduleinterview">
+            <parent>bpm:workflowTask</parent>
+            <properties>
+                <property name="hiring:date">
+                    <type>d:datetime</type>
+                    <protected>false</protected>
+                    <mandatory>true</mandatory>
+                    <multiple>false</multiple>
+                </property>
+            </properties>
+            <associations/>
+            <overrides>
+                <property name="bpm:packageActionGroup">
+                    <default>add_package_item_actions</default>
+                </property>
+                <property name="bpm:packageItemActionGroup">
+                    <default>edit_and_remove_package_item_actions</default>
+                </property>
+            </overrides>
+            <mandatory-aspects>
+                <aspect>hiring:name</aspect>
+                <aspect>hiring:email</aspect>
+                <aspect>hiring:position</aspect>
+            </mandatory-aspects>
+        </type>
+        <type name="hiring:interview">
+            <parent>bpm:workflowTask</parent>
+            <properties>
+                <property name="hiring:generalimpression">
+                    <type>d:text</type>
+                    <protected>false</protected>
+                    <mandatory>false</mandatory>
+                    <multiple>false</multiple>
+                </property>
+                <property name="hiring:decision">
+                    <type>d:text</type>
+                    <protected>false</protected>
+                    <mandatory>true</mandatory>
+                    <multiple>false</multiple>
+                     <constraints>
+                        <constraint ref="hiring:decisionlist"/>
+                    </constraints>
+                </property>
+            </properties>
+            <associations/>
+            <overrides>
+                <property name="bpm:packageActionGroup">
+                    <default>add_package_item_actions</default>
+                </property>
+                <property name="bpm:packageItemActionGroup">
+                    <default>edit_and_remove_package_item_actions</default>
+                </property>
+            </overrides>
+            <mandatory-aspects>
+                <aspect>hiring:name</aspect>
+                <aspect>hiring:email</aspect>
+                <aspect>hiring:position</aspect>
+            </mandatory-aspects>
+        </type>
+        <type name="hiring:dopaperwork">
+            <parent>bpm:workflowTask</parent>
+            <properties/>
+            <associations/>
+            <mandatory-aspects>
+                <aspect>hiring:name</aspect>
+                <aspect>hiring:email</aspect>
+                <aspect>hiring:position</aspect>
+            </mandatory-aspects>
+        </type>
+        <type name="hiring:start">
+            <parent>bpm:startTask</parent>
+            <properties>
+                <property name="hiring:requiresnumberofapprovers">
+                    <type>d:double</type>
+                    <protected>false</protected>
+                    <mandatory>true</mandatory>
+                    <multiple>false</multiple>
+                </property>
+            </properties>
+            <associations>
+                <association name="hiring:selectpeople">
+                    <title>Select people</title>
+                    <source>
+                        <mandatory>true</mandatory>
+                        <many>false</many>
+                    </source>
+                    <target>
+                        <class>cm:person</class>
+                        <mandatory>true</mandatory>
+                        <many>true</many>
+                    </target>
+                </association>
+            </associations>
+            <mandatory-aspects>
+                <aspect>hiring:position</aspect>
+                <aspect>hiring:name</aspect>
+                <aspect>hiring:email</aspect>
+            </mandatory-aspects>
+        </type>
+    </types>
+    <aspects>
+        <aspect name="hiring:name">
+            <properties>
+                <property name="hiring:name">
+                    <type>d:text</type>
+                    <protected>false</protected>
+                    <mandatory>true</mandatory>
+                    <multiple>false</multiple>
+                </property>
+            </properties>
+        </aspect>
+        <aspect name="hiring:position">
+            <properties>
+                <property name="hiring:position">
+                    <type>d:text</type>
+                    <protected>false</protected>
+                    <mandatory>true</mandatory>
+                    <multiple>false</multiple>
+                </property>
+            </properties>
+        </aspect>
+        <aspect name="hiring:email">
+            <properties>
+                <property name="hiring:email">
+                    <type>d:text</type>
+                    <protected>false</protected>
+                    <mandatory>true</mandatory>
+                    <multiple>false</multiple>
+                </property>
+            </properties>
+        </aspect>
+    </aspects>
+</model>
