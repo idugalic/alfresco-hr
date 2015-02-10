@@ -13,8 +13,7 @@
 * http://docs.alfresco.com/5.0/tasks/wf-install-activiti-designer.html
 
 ## Sample Human Resources (Hiring) process
-![hiring.bpmn20.jpg](https://bitbucket.org/repo/65bdjx/images/1132928876-hiring.bpmn20.jpg)
-
+![hiring.bpmn20.jpg](https://bitbucket.org/repo/65bdjx/images/3500786227-hiring.bpmn20.jpg)
 ## Resources
 
 * [Alfresco Documentation](http://docs.alfresco.com)
