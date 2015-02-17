@@ -66,3 +66,4 @@ AMP files can be installed into the Alfresco and Share WAR files using the Modul
 * [Developer series](http://ecmarchitect.com/alfresco-developer-series)
 * [Fork and contribute to this SDK](https://github.com/Alfresco/alfresco-sdk/fork)
 * [Report an Alfresco issue](https://issues.alfresco.com/jira/browse/ALF)
+* [Certification](http://university.alfresco.com/certification)
