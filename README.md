@@ -43,7 +43,7 @@ AMP files can be installed into the Alfresco and Share WAR files using the Modul
 * **repo-amp** module contains content model definitions and advanced workflow to support **'Hiring process'** 
 * **share-amp** module contains forms and configuration that is necessary for  Hiring process to be presented in the Share application.
 
-[[https://github.com/idugalic/alfresco-hr/blob/master/hiring-alfresco.bpmn20.jpg|alt=Hiring process]]
+![Alt text](https://github.com/idugalic/alfresco-hr/blob/master/hiring-alfresco.bpmn20.jpg)
 
 
 ## Runing instructions
