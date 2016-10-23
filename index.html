@@ -1,0 +1,140 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>alfresco-hr by idugalic</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/github-light.css">
+    <meta name="viewport" content="width=device-width">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>alfresco-hr</h1>
+        <p>Human Resources (Hiring) process</p>
+
+        <p class="view"><a href="https://github.com/idugalic/alfresco-hr">View the Project on GitHub <small>idugalic/alfresco-hr</small></a></p>
+
+
+        <ul>
+          <li><a href="https://github.com/idugalic/alfresco-hr/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/idugalic/alfresco-hr/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/idugalic/alfresco-hr">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <h1>
+<a id="application-hiring-process" class="anchor" href="#application-hiring-process" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Application 'Hiring process'</h1>
+
+<h2>
+<a id="alfresco-community" class="anchor" href="#alfresco-community" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Alfresco Community</h2>
+
+<p>Alfresco Community Edition is the open source alternative for Enterprise Content Management. 
+It  allows organizations to manage any type of content, from simple office documents to scanned images, photographs, engineering drawings and large video files.</p>
+
+<p>Common usage includes:</p>
+
+<ul>
+<li>Document management systems</li>
+<li>Content platforms</li>
+<li>CMIS-compliant repositories</li>
+<li>BPM (Business Process Management)</li>
+</ul>
+
+<h2>
+<a id="modules" class="anchor" href="#modules" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Modules</h2>
+
+<p>Maven Alfresco SDK - All-in-One Archetype generated multi-module project.</p>
+
+<p>The All-in-One Alfresco project is composed by the following modules:</p>
+
+<ul>
+<li>
+<strong>repo-amp</strong>: An Repository Tier AMP project, demonstrating sample project structure and demo component loading</li>
+<li>
+<strong>repo</strong>: An alfresco.war Repository Extension, overlaying the Alfresco WAR with custom resources / classes and depending on the amp project</li>
+<li>
+<strong>share-amp</strong>: A Share Tier AMP project, demonstrating sample project structure and demo component loading</li>
+<li>
+<strong>share</strong>: A share.war extension, overlaying the Share WAR with the custom developed share-amp</li>
+<li>
+<strong>solr</strong>: An Alfresco alfresco-<em>-</em>-solr.zip overlay / customization to configure Apache Solr cores properties</li>
+<li>
+<strong>runner</strong>: A Tomcat + H2 runner, capable of running all the aforementioned projects in embedded mode for demo / integration-testing purposes</li>
+</ul>
+
+<p>The project provides support for typical development lifecycle use cases like:</p>
+
+<ul>
+<li>Rapid development, in full IDE integration, and with hot classes reloading (using spring-loaded, check prerequisites).</li>
+<li>AMP/WAR packaging</li>
+<li>AMP Unit testing and rapid development</li>
+<li>Run embedded in Tomcat + H2 database. (NOTE: this is not a supported stack so use only for development purposes)</li>
+<li>Integration testing</li>
+<li>AMP to WAR installation and overlay (embedding Alfresco Module Managment Tool)</li>
+<li>Release and distribution</li>
+</ul>
+
+<h3>
+<a id="what-is-amp" class="anchor" href="#what-is-amp" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>What is AMP</h3>
+
+<p>As a general rule of thumb, anything that is considered to be an 'installable' extension to Alfresco should be called a module and packaged as one or more AMP files (best practice is to provide one AMP for the repository tier and another for the Share UI tier). An AMP file can contain as little as a set of custom templates or a new category. It can contain a custom model and associated UI customisations. It could contain a complete new set of functionality.</p>
+
+<p>AMP files can be installed into the Alfresco and Share WAR files using the Module Management Tool.</p>
+
+<h3>
+<a id="sample-human-resources-hiring-process" class="anchor" href="#sample-human-resources-hiring-process" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Sample Human Resources (Hiring) process</h3>
+
+<ul>
+<li>
+<strong>repo-amp</strong> module contains content model definitions and advanced workflow to support <strong>'Hiring process'</strong> </li>
+<li>
+<strong>share-amp</strong> module contains forms and configuration that is necessary for  Hiring process to be presented in the Share application.</li>
+</ul>
+
+<p><img src="https://github.com/idugalic/alfresco-hr/blob/master/hiring-alfresco.bpmn20.jpg" alt="Alt text"></p>
+
+<h2>
+<a id="runing-instructions" class="anchor" href="#runing-instructions" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Runing instructions</h2>
+
+<ul>
+<li>Enter the project folder and run ./run.sh (you might need to chmod u+x run.sh to make it executable). This will setup the SDK and start Alfresco, Share and Solr in embedded mode.</li>
+<li>Wait for the startup of the webapps and then go http://localhost:8080.</li>
+<li>Import the projects in your favorite IDE (with Maven integration) and start developing right away.</li>
+</ul>
+
+<h2>
+<a id="boost-your-productivity" class="anchor" href="#boost-your-productivity" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Boost Your Productivity</h2>
+
+<ul>
+<li><a href="http://summit.alfresco.com/boston/sessions/boost-your-productivity-next-gen-bpm-tooling">http://summit.alfresco.com/boston/sessions/boost-your-productivity-next-gen-bpm-tooling</a></li>
+<li><a href="http://bpmn20inaction.blogspot.be/2014/01/activiti-designer-5140-released.html">http://bpmn20inaction.blogspot.be/2014/01/activiti-designer-5140-released.html</a></li>
+<li><a href="http://docs.alfresco.com/5.0/tasks/wf-install-activiti-designer.html">http://docs.alfresco.com/5.0/tasks/wf-install-activiti-designer.html</a></li>
+</ul>
+
+<h2>
+<a id="resources" class="anchor" href="#resources" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Resources</h2>
+
+<ul>
+<li><a href="http://docs.alfresco.com">Alfresco Documentation</a></li>
+<li><a href="https://support.alfresco.com">Alfresco Enterprise Support portal</a></li>
+<li><a href="http://ecmarchitect.com/alfresco-developer-series">Developer series</a></li>
+<li><a href="https://github.com/Alfresco/alfresco-sdk/fork">Fork and contribute to this SDK</a></li>
+<li><a href="https://issues.alfresco.com/jira/browse/ALF">Report an Alfresco issue</a></li>
+<li><a href="http://university.alfresco.com/certification">Certification</a></li>
+</ul>
+      </section>
+      <footer>
+        <p>This project is maintained by <a href="https://github.com/idugalic">idugalic</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+    <script src="javascripts/scale.fix.js"></script>
+    
+  </body>
+</html>
